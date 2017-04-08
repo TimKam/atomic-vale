@@ -15,6 +15,11 @@ module.exports =
       title: 'Path to your vale configuation file'
       default: atom.project.getPaths()[0]
 
+    lintOnFly:
+      type: 'boolean'
+      title: 'Run linter after each edit (not only after saving)'
+      default: true
+
   activate: =>
     @subscriptions = new CompositeDisposable
 
@@ -25,6 +30,10 @@ module.exports =
     @subscriptions.add atom.config.observe 'atomic-vale.configPath',
       (configPath) =>
         @configPath = configPath
+
+    @subscriptions.add atom.config.observe 'atomic-vale.lintOnFly',
+      (lintOnFly) =>
+        @lintOnFly = lintOnFly
 
   deactivate: =>
       @subscriptions.dispose()
@@ -52,8 +61,12 @@ module.exports =
 
       scope: 'file'
 
+      lintOnFly: @lintOnFly
+
       lint: (textEditor) =>
         filePath = textEditor.getPath()
+        inputText = textEditor.getText()
+        fileExtension = path.extname(filePath)
         output = "{}"
         config = "{}"
 
@@ -66,15 +79,15 @@ module.exports =
             return []
 
           lintProcess = process.spawn @valePath,
-            ['--output=JSON', filePath],
+            ["--ext=#{fileExtension}", '--output=JSON', inputText],
             cwd: @configPath
 
           lintProcess.stdout.on 'data', (data) =>
             output = data.toString()
             if output.length <= 3 # if empty object
-              output = '{"__filePath__":[]}'.replace('__filePath__', filePath)
+              output = "{\"stdin#{fileExtension}\":[]}"
 
-            feedback = JSON.parse(output)[filePath]
+            feedback = JSON.parse(output)["stdin#{fileExtension}"]
             messages = []
             for message in feedback
               atomMessageLine = message.Line - 1
