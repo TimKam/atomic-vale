@@ -20,29 +20,10 @@ module.exports =
       title: 'Run linter after each edit (not only after saving)'
       default: true
 
-  activate: =>
-    @subscriptions = new CompositeDisposable
-
-    @subscriptions.add atom.config.observe 'atomic-vale.valePath',
-        (valePath) =>
-          @valePath = valePath
-
-    @subscriptions.add atom.config.observe 'atomic-vale.configPath',
-      (configPath) =>
-        @configPath = configPath
-
-    @subscriptions.add atom.config.observe 'atomic-vale.lintOnFly',
-      (lintOnFly) =>
-        @lintOnFly = lintOnFly
-
-  deactivate: =>
-      @subscriptions.dispose()
-
-  provideLinter: =>
-    provider =
-      name: 'vale'
-
-      grammarScopes: [
+    grammarScopes:
+      type: 'array'
+      title: 'List of scopes for languages vale will lint'
+      default: [
         "source.gfm"
         "gfm.restructuredtext"
         "source.asciidoc"
@@ -58,6 +39,34 @@ module.exports =
         "text.tex.latex.memoir"
         "text.tex"
       ]
+
+  activate: =>
+    @subscriptions = new CompositeDisposable
+
+    @subscriptions.add atom.config.observe 'atomic-vale.valePath',
+        (valePath) =>
+          @valePath = valePath
+
+    @subscriptions.add atom.config.observe 'atomic-vale.configPath',
+      (configPath) =>
+        @configPath = configPath
+
+    @subscriptions.add atom.config.observe 'atomic-vale.lintOnFly',
+      (lintOnFly) =>
+        @lintOnFly = lintOnFly
+
+    @subscriptions.add atom.config.observe 'atomic-vale.grammarScopes',
+      (grammarScopes) =>
+        @grammarScopes = grammarScopes
+
+  deactivate: =>
+      @subscriptions.dispose()
+
+  provideLinter: =>
+    provider =
+      name: 'vale'
+
+      grammarScopes: @grammarScopes
 
       scope: 'file'
 

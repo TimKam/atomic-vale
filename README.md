@@ -3,7 +3,7 @@ Atomic vale is a [vale](https://github.com/ValeLint/vale) plugin for Atom.
 
 ## Installation
 1. [Install vale](https://github.com/ValeLint/vale#installation) for your
-command line.  
+command line.
  **Note:** Atomic vale requires vale version **0.4.0** or higher.
 
 2. Then, install `atomic-vale` via the
@@ -19,3 +19,4 @@ parameters:
 * The path to your vale configuration file
 * Whether the linter runs *on the fly* after each edit or merely after saving
   the file
+* A List of scopes for languages vale will lint
