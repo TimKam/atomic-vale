@@ -105,7 +105,7 @@ module.exports =
                 text: message.Message
                 filePath: filePath
                 range: [
-                  [atomMessageLine, message.Span[0]]
+                  [atomMessageLine, message.Span[0] - 1]
                   [atomMessageLine, message.Span[1]]
                 ]
 
