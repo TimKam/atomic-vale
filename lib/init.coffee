@@ -96,7 +96,8 @@ module.exports =
             if output.length <= 3 # if empty object
               output = "{\"stdin#{fileExtension}\":[]}"
 
-            feedback = JSON.parse(output)["stdin#{fileExtension}"]
+            feedback = JSON.parse(output)["stdin#{fileExtension}"] or
+              JSON.parse(output)['stdinunknown']
             messages = []
             for message in feedback
               atomMessageLine = message.Line - 1
