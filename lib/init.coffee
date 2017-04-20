@@ -76,6 +76,7 @@ module.exports =
         filePath = textEditor.getPath()
         inputText = textEditor.getText()
         fileExtension = path.extname(filePath)
+        fileDirectory = path.dirname(filePath)
         output = "{}"
         config = "{}"
 
@@ -89,7 +90,7 @@ module.exports =
 
           lintProcess = process.spawn @valePath,
             ["--ext=#{fileExtension}", '--output=JSON', "'#{inputText}'"],
-            cwd: @configPath
+            cwd: fileDirectory
 
           lintProcess.stdout.on 'data', (data) =>
             output = data.toString()
