@@ -88,7 +88,7 @@ module.exports =
             return []
 
           lintProcess = process.spawn @valePath,
-            ["--ext=#{fileExtension}", '--output=JSON', inputText],
+            ["--ext=#{fileExtension}", '--output=JSON', "'#{inputText}'"],
             cwd: @configPath
 
           lintProcess.stdout.on 'data', (data) =>

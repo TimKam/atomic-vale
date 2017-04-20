@@ -1,3 +1,5 @@
+## 1.5.0 - Fall back to default vale config
+* [#8](https://github.com/TimKam/atomic-vale/issues/8): Fix: throws exceptions if file starts with `--` (interprets text input as flag).
 ## 1.4.0 - Fall back to default vale config
 * [#5](https://github.com/TimKam/atomic-vale/issues/5): Fall back to default vale config if no vale configuration file provided
 ## 1.3.0 - Fix column index
