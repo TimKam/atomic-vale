@@ -10,11 +10,6 @@ module.exports =
       title: 'Path to your vale installation'
       default: 'vale'
 
-    configPath:
-      type: 'string'
-      title: 'Path to your vale configuation file'
-      default: atom.project.getPaths()[0]
-
     lintOnFly:
       type: 'boolean'
       title: 'Run linter after each edit (not only after saving)'
@@ -47,10 +42,6 @@ module.exports =
         (valePath) =>
           @valePath = valePath
 
-    @subscriptions.add atom.config.observe 'atomic-vale.configPath',
-      (configPath) =>
-        @configPath = configPath
-
     @subscriptions.add atom.config.observe 'atomic-vale.lintOnFly',
       (lintOnFly) =>
         @lintOnFly = lintOnFly
@@ -76,6 +67,7 @@ module.exports =
         filePath = textEditor.getPath()
         inputText = textEditor.getText()
         fileExtension = path.extname(filePath)
+        fileDirectory = path.dirname(filePath)
         output = "{}"
         config = "{}"
 
@@ -89,7 +81,7 @@ module.exports =
 
           lintProcess = process.spawn @valePath,
             ["--ext=#{fileExtension}", '--output=JSON', "'#{inputText}'"],
-            cwd: @configPath
+            cwd: fileDirectory
 
           lintProcess.stdout.on 'data', (data) =>
             output = data.toString()
@@ -117,7 +109,7 @@ module.exports =
         return new Promise (resolve, reject) =>
           getConfigProcess=process.spawn @valePath,
             ['dump-config'],
-            cwd: @configPath
+            cwd: fileDirectory
 
           getConfigProcess.stdout.on 'data', (data) => runLinter(data.toString(), resolve)
 
