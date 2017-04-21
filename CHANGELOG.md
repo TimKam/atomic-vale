@@ -1,3 +1,5 @@
+## 1.6.0 - Search for config file in current directory, then move up
+* [#10](https://github.com/TimKam/atomic-vale/issues/10): Removes vale configuration file parameter. Instead, atomic vale supports vale's default behavior: vale starts looking for the config in the same directory as the file vale is currently linting. If not found, vale moves up the directory tree until it finds a configuration file. vale v0.4.1 looks maximally six levels up, before it falls back to the default configuration.
 ## 1.5.0 - Fall back to default vale config
 * [#8](https://github.com/TimKam/atomic-vale/issues/8): Fix: throws exceptions if file starts with `--` (interprets text input as flag).
 ## 1.4.0 - Fall back to default vale config
