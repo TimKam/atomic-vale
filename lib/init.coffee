@@ -1,7 +1,6 @@
 path = require 'path'
-process = require 'child_process'
 
-{CompositeDisposable, project} = require 'atom'
+{BufferedProcess, CompositeDisposable, project} = require 'atom'
 
 module.exports =
   config:
@@ -19,20 +18,20 @@ module.exports =
       type: 'array'
       title: 'List of scopes for languages vale will lint'
       default: [
-        "source.gfm"
-        "gfm.restructuredtext"
-        "source.asciidoc"
-        "text.md"
-        "text.git-commit"
-        "text.plain"
-        "text.plain.null-grammar"
-        "text.restructuredtext"
-        "text.bibtex"
-        "text.tex.latex"
-        "text.tex.latex.beamer"
-        "text.log.latex"
-        "text.tex.latex.memoir"
-        "text.tex"
+        'source.gfm'
+        'gfm.restructuredtext'
+        'source.asciidoc'
+        'text.md'
+        'text.git-commit'
+        'text.plain'
+        'text.plain.null-grammar'
+        'text.restructuredtext'
+        'text.bibtex'
+        'text.tex.latex'
+        'text.tex.latex.beamer'
+        'text.log.latex'
+        'text.tex.latex.memoir'
+        'text.tex'
       ]
 
   activate: =>
@@ -68,10 +67,9 @@ module.exports =
         inputText = textEditor.getText()
         fileExtension = path.extname(filePath)
         fileDirectory = path.dirname(filePath)
-        output = "{}"
-        config = "{}"
+        output = ''
 
-        runLinter = (jsonConfig, resolve) =>
+        runLinter = (resolve) =>
           onError = ({error,handle}) =>
             atom.notifications.addError "Error running #{@valePath}",
               detail: "#{error.message}"
@@ -79,38 +77,44 @@ module.exports =
             handle()
             return []
 
-          lintProcess = process.spawn @valePath,
-            ["--ext=#{fileExtension}", '--output=JSON', "'#{inputText}'"],
-            cwd: fileDirectory
+          lintProcess = new BufferedProcess
+            command: @valePath
 
-          lintProcess.stdout.on 'data', (data) =>
-            output = data.toString()
-            if output.length <= 3 # if empty object
-              output = "{\"stdin#{fileExtension}\":[]}"
+            args: ["--ext=#{fileExtension}", '--output=JSON', "'#{inputText}'"],
 
-            feedback = JSON.parse(output)["stdin#{fileExtension}"] or
-              JSON.parse(output)['stdinunknown']
-            messages = []
-            for message in feedback
-              atomMessageLine = message.Line - 1
-              messages.push
-                type: message.Severity
-                text: message.Message
-                filePath: filePath
-                range: [
-                  [atomMessageLine, message.Span[0] - 1]
-                  [atomMessageLine, message.Span[1]]
-                ]
+            options: {
+              cwd: fileDirectory
+            }
 
-            resolve messages
+            stdout: (data) =>
+              output += data
 
-          lintProcess.stdout.on 'error', (error, handle) => onError
+            exit: (code) =>
+              if output.length <= 3 # if empty object
+                output = "{\"stdin#{fileExtension}\":[]}"
+
+              feedback = JSON.parse(output)["stdin#{fileExtension}"] or
+                JSON.parse(output)['stdinunknown']
+              messages = []
+              for message in feedback
+                atomMessageLine = message.Line - 1
+                atomMessageRow = message.Span[0] - 1
+                isDuplicate = messages.some (existingMessage) =>
+                    existingMessage.range[0][0] == atomMessageLine and
+                    existingMessage.range[0][1] == atomMessageRow
+                if not isDuplicate
+                  messages.push
+                    type: message.Severity
+                    text: message.Message
+                    filePath: filePath
+                    range: [
+                      [atomMessageLine, atomMessageRow]
+                      [atomMessageLine, message.Span[1]]
+                    ]
+
+              resolve messages
+
+          lintProcess.onWillThrowError ({error, handle}) => onError
 
         return new Promise (resolve, reject) =>
-          getConfigProcess=process.spawn @valePath,
-            ['dump-config'],
-            cwd: fileDirectory
-
-          getConfigProcess.stdout.on 'data', (data) => runLinter(data.toString(), resolve)
-
-          getConfigProcess.stdout.on 'error', (error, handle) => onError
+          runLinter(resolve)
