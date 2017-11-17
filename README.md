@@ -10,7 +10,7 @@ Atomic vale is a [vale](https://github.com/ValeLint/vale) plugin for Atom.
 ## Configuration
 You manage your vale configuration in a
 [`.vale` or `_vale` file](https://github.com/ValeLint/vale#vale-your-style-our-editor).
-vale starts looking for this file in the same directory as the file vale is currently linting. If not found, vale moves up the directory tree until it finds a configuration file. vale v0.4.1 looks maximally six levels up, before it falls back to the default configuration.
+This file may be located in the current working directory, a parent directory or `$HOME`. If more than one configuration file is present, the closest one takes precedence.
 
 In the atomic vale configuration settings, you can specify the following parameters:
 * The paths to your vale installation
