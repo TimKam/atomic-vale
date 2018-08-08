@@ -1,3 +1,5 @@
+## 1.8.0 - Fix linter level for suggestions
+* [#16](https://github.com/TimKam/atomic-vale/pull/16): Fix: atomic-vale does not provide the necessary mapping from value's *suggestion* level to the Atom linter's *info* level.
 ## 1.7.0 - Fix exceptions when exceeding file length threshold
 * [#11](https://github.com/TimKam/atomic-vale/issues/11): Fix: atomic-vale throws exception if the linted file exceeds a length of ~100 lines.
 ## 1.6.0 - Search for config file in current directory, then move up
