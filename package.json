@@ -1,7 +1,7 @@
 {
   "name": "atomic-vale",
   "main": "./lib/init",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "description": "Atom plugin for Vale, a customizable, syntax-aware linter for prose",
   "keywords": [],
   "repository": "https://github.com/TimKam/atomic-vale",
