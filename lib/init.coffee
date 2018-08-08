@@ -104,7 +104,7 @@ module.exports =
                     existingMessage.range[0][1] == atomMessageRow
                 if not isDuplicate
                   messages.push
-                    type: message.Severity
+                    type: if message.Severity == 'suggestion' then 'info' else message.Severity
                     text: message.Message
                     filePath: filePath
                     range: [
