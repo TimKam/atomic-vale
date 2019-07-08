@@ -1,3 +1,6 @@
+## 1.9.0 Add rule reference to feedback message
+* [#19](https://github.com/TimKam/atomic-vale/pull/19/): Improvement: adds the name of the rule that provides a feedback message to the linter output.
+* Support [Standard Linter v2](https://steelbrain.me/linter/examples/standard-linter-v2.html).
 ## 1.8.0 - Fix linter level for suggestions
 * [#16](https://github.com/TimKam/atomic-vale/pull/16): Fix: atomic-vale does not provide the necessary mapping from value's *suggestion* level to the Atom linter's *info* level.
 ## 1.7.0 - Fix exceptions when exceeding file length threshold
