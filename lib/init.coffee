@@ -60,7 +60,7 @@ module.exports =
 
       scope: 'file'
 
-      lintOnFly: @lintOnFly
+      lintsOnChange: @lintOnFly
 
       lint: (textEditor) =>
         filePath = textEditor.getPath()
@@ -100,17 +100,18 @@ module.exports =
                 atomMessageLine = message.Line - 1
                 atomMessageRow = message.Span[0] - 1
                 isDuplicate = messages.some (existingMessage) =>
-                    existingMessage.range[0][0] == atomMessageLine and
-                    existingMessage.range[0][1] == atomMessageRow
+                    existingMessage.location.position[0][0] == atomMessageLine and
+                    existingMessage.location.position[0][1] == atomMessageRow
                 if not isDuplicate
                   messages.push
-                    type: if message.Severity == 'suggestion' then 'info' else message.Severity
-                    text: '#{message.Message} <#{message.Check}>'
-                    filePath: filePath
-                    range: [
-                      [atomMessageLine, atomMessageRow]
-                      [atomMessageLine, message.Span[1]]
-                    ]
+                    severity: if message.Severity == 'suggestion' then 'info' else message.Severity
+                    excerpt: "#{message.Message} (#{message.Check})"
+                    location:
+                      file: filePath
+                      position: [
+                        [atomMessageLine, atomMessageRow]
+                        [atomMessageLine, message.Span[1]]
+                      ]
 
               resolve messages
 
