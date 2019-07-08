@@ -105,7 +105,7 @@ module.exports =
                 if not isDuplicate
                   messages.push
                     type: if message.Severity == 'suggestion' then 'info' else message.Severity
-                    text: message.Message
+                    text: '#{message.Message} <#{message.Check}>'
                     filePath: filePath
                     range: [
                       [atomMessageLine, atomMessageRow]
